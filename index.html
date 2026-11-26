@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snow's Widgets</title>
+  <meta name="description" content="A free, open-source widget bar for your Windows taskbar, made for gamers and streamers: clipping, app folders, Twitch alerts, PC stats and more.">
+  <meta name="theme-color" content="#222831">
+  <link rel="icon" href="logo.png">
+
+  <!-- Share preview (Discord, X, ...) -->
+  <meta property="og:title" content="Snow's Widgets">
+  <meta property="og:description" content="Your Windows taskbar, turned into a widget bar for gamers and streamers. Free and open source.">
+  <meta property="og:image" content="https://sn5i.github.io/promo-poster.webp">
+  <meta property="og:url" content="https://sn5i.github.io/">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Pick the saved theme before the page draws, so it never flashes the wrong colors -->
+  <script>
+    try {
+      const saved = localStorage.getItem("snow-theme");
+      const light = saved ? saved === "light" : matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.dataset.theme = light ? "light" : "dark";
+    } catch (e) { document.documentElement.dataset.theme = "dark"; }
+  </script>
+</head>
+<body>
+
+  <canvas id="snow" aria-hidden="true"></canvas>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero" id="top">
+    <button class="pixel-btn theme-toggle" id="themeToggle" type="button" aria-label="Switch between dark and light">
+      <span class="theme-icon" aria-hidden="true"></span>
+    </button>
+
+    <h1 class="logo">
+      <img src="logo.png" alt="">
+      Snow's Widgets
+    </h1>
+    <p class="tagline">Your Windows taskbar, turned into a widget bar for gamers and streamers. Free, light and open source.</p>
+    <p class="maker">made by <strong>Snow</strong></p>
+
+    <div class="hero-actions">
+      <a class="pixel-btn primary big" href="#download">Download for Windows</a>
+      <a class="pixel-btn big" href="#clipping">Try it live ↓</a>
+    </div>
+
+    <svg class="peaks" aria-hidden="true"></svg>
+  </header>
+
+  <!-- ============ THE SNOW BAR (also the menu) ============ -->
+  <nav class="snowbar" id="snowbar" aria-label="Sections">
+    <a class="tile home" href="#top" aria-label="Back to top"><img src="logo.png" alt=""></a>
+    <a class="tile stat" href="#metrics"><small>CPU</small><b data-live="cpu">23%</b></a>
+    <a class="tile stat" href="#metrics"><small>GPU</small><b data-live="gpu">61%</b></a>
+    <a class="tile" href="#download">Download</a>
+    <a class="tile" href="#clipping">Clipping</a>
+    <a class="tile" href="#folders">Folders</a>
+    <a class="tile" href="#companion">Companion</a>
+    <a class="tile" href="#ram">RAM <b data-live="ram">78%</b></a>
+    <a class="tile" href="#twitch"><span class="live-dot" data-live="dot"></span>Twitch</a>
+    <a class="tile" href="#metrics">Metrics</a>
+    <a class="tile" href="#about">About</a>
+    <a class="tile" href="#faq">FAQ</a>
+  </nav>
+
+  <main>
+
+    <!-- ============ DOWNLOAD ============ -->
+    <section class="section" id="download">
+      <div class="section-text reveal">
+        <p class="kicker">Get it</p>
+        <h2>Download</h2>
+        <p>One small installer, no account, no ads. It installs just for you (no admin needed) and updates itself when a new version is out.</p>
+        <ul class="checks">
+          <li>Windows 10 and 11, 64-bit</li>
+          <li>AMD, NVIDIA and Intel graphics</li>
+          <li>Open source under GPL-3.0</li>
+        </ul>
+      </div>
+
+      <div class="card download-card reveal">
+        <div class="dl-head">
+          <img src="logo.png" alt="">
+          <div>
+            <div class="dl-name">Snow's Widgets</div>
+            <div class="dl-meta"><span id="dlVersion">v0.7.0</span> · <span id="dlDate">Nov 26, 2026</span> · <span id="dlSize">37 MB</span></div>
+          </div>
+        </div>
+        <a class="pixel-btn primary big wide" id="dlButton" href="https://github.com/Sn5i/Snows-Widgets/releases/latest">Download the installer</a>
+        <details class="tip">
+          <summary>Windows says "Windows protected your PC"?</summary>
+          <p>That's normal for free apps without a paid certificate. Click <b>More info</b>, then <b>Run anyway</b>. The installer is scanned clean on <a href="https://www.virustotal.com/gui/file/5461d167a6a84d1374a3ad435967ca4ee2af1caca5958991196930c2e0ffaeea">VirusTotal (0/68)</a> and the code is public on <a href="https://github.com/Sn5i/Snows-Widgets">GitHub</a>.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ CLIPPING ============ -->
+    <section class="section" id="clipping">
+      <div class="section-text reveal">
+        <p class="kicker">Instant replay</p>
+        <h2>Clipping</h2>
+        <p>It keeps the last moments of your game in memory. Something crazy happens? Press <kbd>Ctrl</kbd> + <kbd>F7</kbd> and it's saved as a video. Powered by the same engine as OBS.</p>
+        <ul class="checks">
+          <li>30 seconds to 9 minutes, 1080p or 1440p</li>
+          <li>Separate audio tracks for game, mic and music</li>
+          <li>Uses your graphics card, so your game stays smooth</li>
+        </ul>
+        <p class="hint">Try it: press <kbd>Ctrl</kbd> + <kbd>F7</kbd> right now.</p>
+      </div>
+
+      <div class="stage reveal" id="clipStage">
+        <svg class="peaks" aria-hidden="true"></svg>
+        <div class="flash" id="clipFlash"></div>
+        <div class="pop clip-pop">
+          <div class="pop-head">
+            <span class="pop-title">Clipping</span>
+            <span class="pill on" id="clipState">● Active</span>
+          </div>
+          <button class="pixel-btn danger wide" id="clipToggle" type="button">■ Stop clipping</button>
+          <button class="pixel-btn primary wide" id="clipSave" type="button">Save a clip <span class="keys">Ctrl+F7</span></button>
+          <div class="pop-box">
+            <div class="row"><span>Quality</span><span>1440p · 60 FPS</span></div>
+            <div class="row"><span>Buffer</span><span id="bufText">0 / 60 s</span></div>
+            <div class="meter"><div id="bufFill"></div></div>
+            <div class="row small"><span>Encoder</span><span>NVIDIA NVENC</span></div>
+          </div>
+          <div class="pop-box">
+            <div class="row small"><span>Headphones</span><span>Game</span></div>
+            <div class="levels" data-levels></div>
+            <div class="row small"><span>Microphone</span><span>Voice</span></div>
+            <div class="levels" data-levels></div>
+          </div>
+          <div class="saved-list" id="savedList"></div>
+        </div>
+      </div>
+
+      <div class="video-wrap reveal">
+        <video controls preload="none" poster="promo-poster.webp" playsinline>
+          <source src="promo.mp4" type="video/mp4">
+        </video>
+        <p class="caption">Song: Mortals x Royalty Mashup [NCS Release]</p>
+      </div>
+      
+      <div class="video-wrap reveal">
+        <video id="tourVideo" autoplay muted loop playsinline preload="metadata" poster="tour-poster.webp" aria-label="A short tour of Snow's Widgets">
+          <source src="tour.mp4" type="video/mp4">
+        </video>
+        <p class="caption">A quick tour: the bar, every widget, the Companion and the app.</p>
+      </div>
+      
+    </section>
+
+    <!-- ============ FOLDERS ============ -->
+    <section class="section" id="folders">
+      <div class="section-text reveal">
+        <p class="kicker">One click setups</p>
+        <h2>App folders</h2>
+        <p>Put your apps in folders right on the taskbar: Gaming, Streaming, AI, anything. Hover to see them, or hit <b>Open All</b> to start your whole setup at once.</p>
+        <ul class="checks">
+          <li>Search inside every folder</li>
+          <li>A shortcut key for each folder</li>
+          <li>Run any app as administrator</li>
+        </ul>
+      </div>
+
+      <div class="stage reveal" id="folderStage">
+        <svg class="peaks" aria-hidden="true"></svg>
+        <div class="windows" id="folderWindows"></div>
+        <div class="pop folder-pop">
+          <div class="tabs" role="tablist" id="folderTabs"></div>
+          <input class="search" id="folderSearch" type="search" placeholder="Search apps..." aria-label="Search apps">
+          <ul class="app-list" id="folderList"></ul>
+          <button class="pixel-btn primary wide" id="openAll" type="button">Open All</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COMPANION ============ -->
+        <!-- ============ COMPANION ============ -->
+    <section class="section" id="companion">
+      <div class="section-text reveal">
+        <p class="kicker">Start menu buddy</p>
+        <h2>Companion</h2>
+        <p>Open the Start menu and your widgets appear around it: folders on the left, your running apps on the right, clipping on top. Close Start and they're gone.</p>
+        <p class="hint">Press the Start button in the picture.</p>
+      </div>
+
+      <div class="stage companion-stage reveal" id="companionStage">
+        <svg class="peaks" aria-hidden="true"></svg>
+        <div class="companion" aria-hidden="true">
+          <div class="c-panel c-top"><b>Clipping</b><span>● Active · 41 / 60 s</span><span class="pixel-btn small primary">Save clip</span></div>
+          <div class="c-side c-left">
+            <div class="c-panel"><b>Gaming</b><span>Discord</span><span>Spotify</span><span>VALORANT</span></div>
+            <div class="c-panel"><b>RAM Optimizer</b><span>51% in use</span><span class="pixel-btn small primary">Optimize now</span></div>
+          </div>
+          <div class="start-menu">
+            <div class="start-search">Search for apps, settings and documents</div>
+            <div class="start-grid"></div>
+          </div>
+          <div class="c-side c-right">
+            <div class="c-panel"><b>Running apps</b><span>Chrome</span><span>Discord</span><span>Spotify</span><span>VALORANT</span></div>
+          </div>
+        </div>
+        <div class="mini-taskbar">
+          <button class="start-btn" id="startBtn" type="button" aria-label="Open Start"><span></span><span></span><span></span><span></span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RAM ============ -->
+    <section class="section" id="ram">
+      <div class="section-text reveal">
+        <p class="kicker">Free up memory</p>
+        <h2>RAM Optimizer</h2>
+        <p>Games and browsers eat memory. One click gives it back, or let it clean automatically when your RAM gets too full.</p>
+        <ul class="checks">
+          <li>Optimize now, or deep clean as admin</li>
+          <li>Automatic mode above a limit you pick</li>
+          <li>See which apps use the most</li>
+        </ul>
+      </div>
+
+      <div class="stage reveal">
+        <svg class="peaks" aria-hidden="true"></svg>
+        <div class="pop ram-pop">
+          <div class="pop-head"><span class="pop-title">RAM Optimizer</span><span class="freed" id="ramFreed">−2.21 GB</span></div>
+          <div class="row"><span>Memory pressure</span><span id="ramLabel">High · 78% in use</span></div>
+          <div class="meter big"><div id="ramFill" style="width:78%"></div></div>
+          <div class="ram-stats">
+            <div><small>Used</small><b id="ramUsed">24.3 GB</b></div>
+            <div><small>Free</small><b id="ramFree">6.8 GB</b></div>
+            <div><small>Total</small><b>31.1 GB</b></div>
+          </div>
+          <div class="btn-row">
+            <button class="pixel-btn primary" id="ramGo" type="button">Optimize now</button>
+            <button class="pixel-btn" id="ramDeep" type="button">Deep clean</button>
+          </div>
+          <div class="top-list" id="ramTop"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TWITCH ============ -->
+        <!-- ============ TWITCH ============ -->
+    <section class="section" id="twitch">
+      <div class="section-text reveal">
+        <p class="kicker">Never miss a stream</p>
+        <h2>Twitch</h2>
+        <p>Add your favorite streamers to the bar. You see who's live, what they're playing and how many are watching, and Windows tells you the second they go live.</p>
+        <p class="hint">This one is real: it shows if Snow is live right now.</p>
+      </div>
+
+      <div class="stage reveal" id="twitchStage">
+        <svg class="peaks" aria-hidden="true"></svg>
+        <div class="pop twitch-pop">
+          <div class="pop-head">
+            <span class="tw-name"><img id="twAvatar" src="logo.png" alt=""> Snow_x5</span>
+            <span class="pill" id="twPill">Checking...</span>
+          </div>
+          <div class="tw-thumb" id="twThumb"><span id="twThumbText">Checking Twitch...</span></div>
+          <p class="tw-title" id="twTitle"></p>
+          <div class="row"><span>Category</span><span id="twGame">—</span></div>
+          <div class="row"><span>Viewers</span><span id="twViewers">—</span></div>
+          <div class="row"><span>Followers</span><span id="twFollowers">—</span></div>
+          <a class="pixel-btn primary wide" href="https://www.twitch.tv/snow_x5" target="_blank" rel="noopener">Open channel</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ METRICS ============ -->
+    <section class="section" id="metrics">
+      <div class="section-text reveal">
+        <p class="kicker">Your PC at a glance</p>
+        <h2>Metrics</h2>
+        <p>CPU, GPU and RAM live on your taskbar, with temperatures too. Hover to see a graph and which apps are working the hardest.</p>
+        <p class="hint">The numbers on the bar above are live too.</p>
+      </div>
+
+      <div class="stage reveal">
+        <svg class="peaks" aria-hidden="true"></svg>
+        <div class="pop metrics-pop">
+          <div class="tabs" role="tablist" id="metricTabs">
+            <button class="tab active" data-metric="cpu" type="button">CPU</button>
+            <button class="tab" data-metric="gpu" type="button">GPU</button>
+            <button class="tab" data-metric="ram" type="button">RAM</button>
+          </div>
+          <div class="pop-head"><span id="metricName">CPU usage</span><b class="big-num" id="metricValue">23%</b></div>
+          <div class="graph" id="graph"></div>
+          <div class="top-list" id="metricTop"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="section about" id="about">
+      <div class="section-text reveal">
+        <p class="kicker">The story</p>
+        <h2>About the app</h2>
+        <p>Snow's Widgets started as one folder of apps on a taskbar. It grew into a full widget bar: a clipping engine built on OBS, a Start menu companion, Twitch alerts and a lot of pixel snow. Every version was tested on real gaming PCs, AMD and NVIDIA.</p>
+        <p>It's free and open source, so anyone can read the code, learn from it, or help make it better.</p>
+      </div>
+
+      <div class="reveal">
+        <div class="stats">
+          <div class="card"><b>0.7.0</b><small>Latest version</small></div>
+          <div class="card"><b>37 MB</b><small>Installer size</small></div>
+          <div class="card"><b>0 / 68</b><small>VirusTotal</small></div>
+          <div class="card"><b>GPL-3.0</b><small>Open source</small></div>
+        </div>
+        <p class="kicker">Built with</p>
+        <div class="chips">
+          <span>Tauri 2</span><span>Rust</span><span>React 19</span><span>TypeScript</span><span>Tailwind</span><span>C++</span><span>OBS libobs</span><span>WebView2</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="section faq" id="faq">
+      <div class="section-text reveal">
+        <p class="kicker">Questions</p>
+        <h2>FAQ</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details>
+          <summary>Is it really free?</summary>
+          <p>Yes. No ads, no account, no paid version. The full source code is on GitHub.</p>
+        </details>
+        <details>
+          <summary>Is it safe?</summary>
+          <p>The installer is scanned clean by 68 antivirus engines on VirusTotal, the code is public, and installers are built by GitHub from that public code. The app sends no data about you anywhere.</p>
+        </details>
+        <details>
+          <summary>Will clipping slow down my games?</summary>
+          <p>Very little. It records with your graphics card's video encoder (AMD, NVIDIA or Intel), the same way OBS and ShadowPlay do, and it never upscales.</p>
+        </details>
+        <details>
+          <summary>Which PCs does it work on?</summary>
+          <p>Windows 10 and 11, 64-bit. Clipping works on AMD, NVIDIA and Intel graphics, and falls back to the CPU if needed.</p>
+        </details>
+        <details>
+          <summary>How do I update?</summary>
+          <p>You don't have to do anything. The app checks for new versions and shows "Update and restart" when one is ready.</p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <svg class="peaks" aria-hidden="true"></svg>
+    <div class="footer-inner">
+      <div class="links">
+        <a class="pixel-btn" href="https://github.com/Sn5i/Snows-Widgets">GitHub</a>
+        <a class="pixel-btn" href="https://x.com/xSnow55">X @xSnow55</a>
+        <button class="pixel-btn" id="discordBtn" type="button">Discord: Sn5i</button>
+      </div>
+      <p>Snow's Widgets · open source under GPL-3.0 · Snow says hi <span class="heart">♥</span></p>
+      <a class="pixel-btn back-top" href="#top" aria-label="Back to top"><img src="logo.png" alt=""></a>
+    </div>
+  </footer>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
