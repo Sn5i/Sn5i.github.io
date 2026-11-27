@@ -148,16 +148,28 @@ function toast(title, text) {
 // ---------------------------------------------------------
 async function loadRelease() {
   try {
-    const response = await fetch("https://api.github.com/repos/Sn5i/Snows-Widgets/releases/latest");
+    const response = await fetch("https://api.github.com/repos/Sn5i/Snows-Widgets/releases");
     if (!response.ok) return; // keep the text that's already on the page
-    const release = await response.json();
-    const installer = release.assets.find((a) => a.name.endsWith("-setup.exe"));
-    $("#dlVersion").textContent = release.tag_name;
-    $("#dlDate").textContent = new Date(release.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const releases = (await response.json()).filter((r) => !r.draft && !r.prerelease);
+    const latest = releases[0];
+    if (!latest) return;
+
+    const installer = latest.assets.find((a) => a.name.endsWith("-setup.exe"));
+    $("#dlVersion").textContent = latest.tag_name;
+    $("#dlDate").textContent = new Date(latest.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     if (installer) {
       $("#dlSize").textContent = `${Math.round(installer.size / 1024 / 1024)} MB`;
       $("#dlButton").href = installer.browser_download_url;
     }
+
+    // add up the installer downloads of every version
+    let downloads = 0;
+    for (const release of releases) {
+      for (const asset of release.assets) {
+        if (asset.name.endsWith("-setup.exe")) downloads += asset.download_count;
+      }
+    }
+    if (downloads > 0) $("#dlCount").textContent = `Downloaded ${downloads.toLocaleString("en-US")} times`;
   } catch (e) {
     // offline or GitHub busy: the button still opens the releases page
   }
